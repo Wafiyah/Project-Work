@@ -1,0 +1,93 @@
+﻿@using CascadingPractice.Models
+@{
+    ViewBag.Title = "SaveCourse";
+    List<Course> departmentList = ViewBag.departmentList;
+    List<int> semesterList = ViewBag.Semester;
+}
+
+<h2>Save Course</h2>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Save Course</title>
+</head>
+<body>
+  <br />
+    <div class="form-horizontal">
+        <form method="POST" id="myForm" class="form-group">
+            <table>
+                <tr>
+                    <td>
+                        <label for="CourseCode" class="control-label col-md-2">Course Code:   </label>
+                    </td>
+                    <td>
+                        <input id="CourseCode" name="CourseCode" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="CourseName" class="control-label col-md-2">Course Name:</label></td>
+                    <td>
+                        <input id="CourseName" name="CourseName" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Credit" class="control-label col-md-2">Credit:   </label>
+                    </td>
+                    <td>
+                        <input id="Credit" name="Credit" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Description" class="control-label col-md-2">Description:   </label>
+                    </td>
+                    <td>
+                        <textarea id="Description" name="Description" rows="2" cols="20"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="DepartmentId" class="control-label col-md-2">Department:   </label>
+                    </td>
+                    <td>
+                        <select name="DepartmentId" id="departmentId" class="form-control">
+                            <option value="">--- Select Department --- </option>
+                            @foreach (var dept in departmentList)
+                            {
+                                <option value="@dept.DepartmentId">@dept.Department</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="Semester" class="control-label col-md-2">Semester:   </label>
+                    </td>
+                    <td>
+                        <select name="Semester" id="Semester" class="form-control">
+                            <option value="">--- Select Semester --- </option>
+                            @foreach (var semester in semesterList)
+                            {
+                                <option value="@semester">@semester</option>
+                            }
+                        </select>
+
+                    </td>
+                </tr>
+                <br/>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Save" class="btn btn-default" />
+                    </td>
+                </tr>
+            </table>
+            @ViewBag.Savemessage
+        </form>
+    </div>
+</body>
+</html>

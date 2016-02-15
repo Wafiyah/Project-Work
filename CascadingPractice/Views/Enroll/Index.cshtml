@@ -1,0 +1,167 @@
+﻿@using CascadingPractice.Models
+
+@model Enroll
+@{
+    ViewBag.Title = "Enroll In a Course";
+    List<Enroll> studentList = ViewBag.getRegNo;
+}
+
+<h2>Index</h2>
+<br />
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Student Enrollment in Course</title>
+</head>
+    <body>
+        <h2>Enroll In a Course</h2>
+        <br/>
+        <div class="form-horizontal">
+            <form method="POST" id="myForm" class="form-group">
+                <table >
+                    <tr>
+                        <td>
+                            <label for="DepartmentId" class="control-label col-md-6">Student Reg. No.  </label>
+                        </td>
+                        <td>
+                            <select name="DepartmentId" id="departmentId" class="form-control">
+                                <option value="">--- Select Department --- </option>
+                                @foreach (var reg in studentList)
+                                {
+                                    <option value="@reg.DepartmentId">@reg.RegNo</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="studentName" class="control-label col-md-6">Name: </label>
+                        </td>
+                        <td>
+                            <input type="text" name="studentName" id="studentName" readonly="readonly" placeholder="Student Name" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="studentEmail" class="control-label col-md-6">Email: </label>
+                        </td>
+                        <td>
+                            <input type="text" name="studentEmail" id="studentEmail" readonly="readonly" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="studentDepartment" class="control-label col-md-6">Department: </label>
+                        </td>
+                        <td>
+                            <input type="text" name="studentDepartment" id="studentDepartment" readonly="readonly" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="courseId" class="control-label col-md-6">Course</label></td>
+                        <td>
+                            <select name="courseId" id="courseId" class="form-control">
+                                <option value="">---Select Course---</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="hidden" name="studentId" id="studentId" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="control-label col-md-6">Date</label>
+                        </td>
+                        <td>
+                            <input id='date-picker' name="EnrollDate" placeholder="Enter Date" class="btn btn-default" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" value="Enroll" class="btn btn-default"/>
+                        </td>
+                    </tr>
+                </table>
+                @ViewBag.insert
+            </form>
+          </div>
+
+        <link href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+        <script src="~/Scripts/jquery-2.2.0.js"></script>
+        <script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+        <script src="~/Scripts/jquery.validate.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+        <script type='text/javascript'>
+            $(function () {
+                $('#date-picker').datepicker();
+            })
+        </script>
+
+        @section scripts
+        {
+            @*populating txt box depending on selected reg no.*@
+            <script>
+                $(document).ready(function () {
+
+                    $("#departmentId").change(function () {
+                        var deptId = $("#departmentId").val();
+                        var json = { departmentId: deptId };
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("GetStudentInfo", "Enroll")',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(json),
+                            success: function (data) {
+                                $.each(data, function (key, value) {
+                                    var name = value.StudentName;
+                                    var email = value.StudentEmail;
+                                    var dept = value.StudentDepartment;
+                                    var id = value.StudentId;
+
+                                    $("#studentId").val(id);
+                                    $("#studentName").val(name);
+                                    $("#studentEmail").val(email);
+                                    $("#studentDepartment").val(dept);
+                                });
+                            }
+                        }).done(function () {
+                            this.reset();
+                        });
+                    });
+                });
+            </script>
+
+            @*load course name depending on selected student department*@
+            <script>
+                $(document).ready(function () {
+
+                    $("#departmentId").change(function () {
+                        var deptId = $("#departmentId").val();
+                        $("#courseId").empty();
+                        var json = { departmentId: deptId };
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("GetCourse", "Enroll")',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(json),
+                            success: function (data) {
+                                //alert(data);
+                                $.each(data, function (key, value) {
+                                    $("#courseId").append('<option value=' + value.CourseId + '>' + value.CourseName + '</option>');
+                                });
+                            }
+                        });
+
+                    });
+                });
+            </script>
+        }
+    </body>
+</html>

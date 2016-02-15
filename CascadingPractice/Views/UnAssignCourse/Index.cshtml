@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Unassign Courses</title>
+    <link href="~/Content/sweetalert.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
+
+</head>
+<body>
+    <br />
+    <br />
+    <div class="form-horizontal">
+        <h2>Unassign All Course</h2>
+        <br />
+        <form id="dialog">
+            <button class="btn btn-default">Unassign Course </button>
+        </form>
+    </div>
+
+
+    <script>
+        document.querySelector('#dialog').addEventListener('submit', function (e) {
+            e.preventDefault();
+            swal({
+                title: "Are you sure to UnAssign Courses?",
+                text: "You will not be able to recover this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Yes, I am sure!',
+                cancelButtonText: "No, cancel it!",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: "UnAssignCourse/UnassignCourse",
+                            type: "POST"
+                        }),
+                            swal({
+                                title: 'UnAssigned!',
+                                text: 'All Courses are UnAssigned Successfully !',
+                                type: 'success'
+                            });
+                    } else {
+                        swal("Cancelled", "All Assign Courses is Safe :)", "error");
+                    }
+                });
+        });
+
+    </script>
+</body>
+</html>

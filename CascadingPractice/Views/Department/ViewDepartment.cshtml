@@ -1,0 +1,43 @@
+﻿@using CascadingPractice.Models
+@model IEnumerable<CascadingPractice.Models.Department>
+
+@{
+    ViewBag.Title = "ViewDepartment";
+    List<Department> departments = ViewBag.departmentList;
+}
+<br/>
+<h2>View Department</h2>
+<br/>
+<p>
+    @Html.ActionLink("Save Department", "SaveDepartment","Department")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DepartmentCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DepartmentName)
+        </th>
+        <th></th>
+    </tr>
+    @if (departments != null)
+    {
+        foreach (var item in departments)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartmentCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartmentName)
+                </td>
+
+            </tr>
+        }
+    }
+</table>
+
+<script src="~/Scripts/jquery-2.2.0.js"></script>
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.js"></script>

@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="~/Content/sweetalert.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
+
+</head>
+<body>
+    <br/>
+    <br/>
+    <div>
+        <h2>Unallocate All ClassRooms</h2>
+        <br/>
+        <form id="dialog">
+            <button class="btn btn-default">Unallocate Rooms</button>
+        </form>
+    </div>
+  
+
+    <script>
+        document.querySelector('#dialog').addEventListener('submit', function (e) {
+            e.preventDefault();
+            swal({
+                title: "Are you sure to Unallocate Rooms?",
+                text: "You will not be able to recover this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Yes, I am sure!',
+                cancelButtonText: "No, cancel it!",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: "UnAllocateClassRoom/UnAllocateRoomManager",
+                            type: "POST"
+                        }),
+                            swal({
+                                title: 'UnAllocated!',
+                                text: 'All Rooms are UnAllocate Successfully !',
+                                type: 'success'
+                            });
+                    } else {
+                        swal("Cancelled", "Rooms Allocation is Safe :)", "error");
+                    }
+                });
+        });
+
+    </script>
+</body>
+</html>

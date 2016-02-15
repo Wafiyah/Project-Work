@@ -1,0 +1,175 @@
+﻿@using CascadingPractice.Models
+
+@{
+    ViewBag.Title = "Index";
+    List<SaveResult> regList = ViewBag.regList;
+    List<string> gradeList = ViewBag.gradeList;
+}
+
+<h2>Index</h2>
+<br />
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Student Enrollment in Course</title>
+</head>
+    <body>
+        <h2>Save Student Result</h2>
+        <br/>
+        <div class="form-horizontal">
+            <form method="POST" id="myForm" class="form-group">
+                <table>
+                    <tr>
+                        <td>
+                            <label for="StudentId" class="control-label col-md-2">Student Reg. No.  </label>
+                        </td>
+                        <td>
+                            <select name="StudentId" id="StudentId" class="form-control">
+                                <option value="">--- Select Reg No. --- </option>
+                                @foreach (var reg in regList)
+                                {
+                                    <option value="@reg.StudentId">@reg.RegNo</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="studentName" class="control-label col-md-2">Name: </label>
+                        </td>
+                        <td>
+                            <input type="text" name="studentName" id="studentName" readonly="readonly" placeholder="Student Name" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="studentEmail" class="control-label col-md-2">Email: </label>
+                        </td>
+                        <td>
+                            <input type="text" name="studentEmail" id="studentEmail" readonly="readonly" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="Department" class="control-label col-md-2">Department: </label>
+                        </td>
+                        <td>
+                            <input type="text" name="Department" id="Department" readonly="readonly" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="CourseName" class="control-label col-md-2">Course</label></td>
+                        <td>
+                            <select name="CourseName" id="CourseName" class="form-control">
+                                <option value="">---Select Course---</option>
+                            </select>
+                            <p style="color:brown" id="message"> </p>
+                        </td>
+                        @*<td> <p style="color: burlywood" id="message"> </p> </td>*@
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="hidden" name="CourseName" id="CourseName" />
+                        </td>
+                        <td>
+                            <input type="hidden" name="RegNo" id="RegNo" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="Grade" class="control-label col-md-2">Grade:   </label>
+                        </td>
+                        <td>
+                            <select name="Grade" id="gradeId" class="form-control">
+                                <option value="">--- Select Grade --- </option>
+                                @foreach (var grade in gradeList)
+                                {
+                                    <option value="@grade">@grade</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" value="Save" class="form-control" />
+                        </td>
+                    </tr>
+                </table>
+                @if (ViewBag.saveMessage != string.Empty)
+                {
+                    <p>@ViewBag.saveMessage</p>
+                }
+                <p id="response"></p>
+
+            </form>
+        </div>
+        <script src="~/Scripts/jquery-2.2.0.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+        @section scripts
+        {
+            @*populating txt box depending on selected reg no.*@
+            <script>
+                $(document).ready(function () {
+
+                    $("#StudentId").change(function () {
+
+                        var stdId = $("#StudentId").val();
+                        //$("#studentName").empty();
+                        //$("#studentEmail").empty();
+                        //$("#studentDepartment").empty();
+                        var json = { studentId: stdId };
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("GetStudentInfo", "SaveResult")',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(json),
+                            "success": function (data) {
+                                $.each(data, function (key, value) {
+                                    var name = value.StudentName;
+                                    var email = value.StudentEmail;
+                                    var dept = value.Department;
+                                    var regNo = value.RegNo;
+
+                                    $("#RegNo").val(regNo);
+                                    $("#studentName").val(name);
+                                    $("#studentEmail").val(email);
+                                    $("#Department").val(dept);
+                                });
+                            }
+                        });
+                    });
+                });
+            </script>
+
+            @*load course name depending on selected student department*@
+            <script>
+                $(document).ready(function () {
+
+                    $("#StudentId").change(function () {
+                        var stdId = $("#StudentId").val();
+                        $("#CourseName").empty();
+                        var json = { studentId: stdId };
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("GetCourse", "SaveResult")',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(json),
+                            success: function (data) {
+                                //alert(data[0].word);
+                                $.each(data, function (key, value) {
+                                    //alert(value.);
+                                    $("#CourseName").append('<option value=' + value.CourseName + '>' + value.CourseName + '</option>');
+                                });
+                            }
+                        });
+
+                    });
+                });
+            </script>
+        }
+    </body>
+</html>

@@ -1,0 +1,145 @@
+﻿@using CascadingPractice.Models
+@{
+    ViewBag.Title = "Index";
+    List<AllocateClassRoom> deptList = ViewBag.departmentlist;
+    List<AllocateClassRoom> roomList = ViewBag.roomList;
+    List<string> dayList = ViewBag.dayLilst;
+}
+
+<h2>Index</h2>
+<br />
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Student Enrollment in Course</title>
+</head>
+    <body>
+        <h2>Allocate ClassRooms</h2>
+        <br/>
+        <div class="form-horizontal">
+            <form method="POST" id="myForm" class="form-group">
+                <table>
+                    <tr>
+                        <td>
+                            <label for="DepartmentId" class="control-label col-md-2">Department:   </label>
+                        </td>
+                        <td>
+                            <select name="DepartmentId" id="departmentId" class="form-control">
+                                <option value="">--- Select Department --- </option>
+                                @foreach (var dept in deptList)
+                                {
+                                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="CourseId" class="control-label col-md-2">Course:</label></td>
+                        <td>
+                            <select name="CourseId" id="courseId" class="form-control">
+                                <option value="">---Select Course---</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="RoomId" class="control-label col-md-2">Room No:   </label>
+                        </td>
+                        <td>
+                            <select name="RoomId" id="roomId" class="form-control">
+                                <option value="">--- Select Room --- </option>
+                                @foreach (var room in roomList)
+                                {
+                                    <option value="@room.RoomId">@room.RoomName</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="Day" class="control-label col-md-2">Day:   </label>
+                        </td>
+                        <td>
+                            <select name="Day" id="dayId" class="form-control">
+                                <option value="">--- Select Day --- </option>
+                                @foreach (var day in dayList)
+                                {
+                                    <option value="@day">@day</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label col-md-2">Form:   </label></td>
+                        <td>
+                            <input id="timepicker" type="text" size="10" placeholder="hh:mm" name="StartTime" class="btn btn-default"/>
+                            <input type="radio" name="FromAmPm" value="AM"  />AM
+                            &nbsp;&nbsp;
+                            <input type="radio" name="FromAmPm" value="PM"  />PM
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label col-md-2"> To:</label></td>
+                        <td>
+                            <input id="timepicker" type="text" size="10" placeholder="hh:mm" name="EndTime" class="btn btn-default" />
+                            <input type="radio" name="ToAmPm" value="AM" />AM
+                            &nbsp;&nbsp;
+                            <input type="radio" name="ToAmPm" value="PM" />PM
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" value="Allocate" class="btn btn-default" />
+                        </td>
+                    </tr>
+                </table>
+                @ViewBag.Savemessage
+            </form>
+        </div>
+
+        <script src="~/Scripts/jquery-2.2.0.js"></script>
+        <script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+        <script>
+            $.mask.definitions['H'] = "[0-1]";
+            $.mask.definitions['h'] = "[0-9]";
+            $.mask.definitions['M'] = "[0-5]";
+            $.mask.definitions['m'] = "[0-9]";
+
+            $("#timepicker").mask("Hh:Mm");
+        </script>
+
+        @section scripts
+        {
+            @*load course name depending on selected student department*@
+            <script>
+                $(document).ready(function () {
+
+                    $("#departmentId").change(function () {
+
+                        var deptId = $("#departmentId").val();
+                        $("#courseId").empty();
+                        var json = { departmentId: deptId };
+
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("GetCourseByCourseID", "AllocateClassroom")',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(json),
+                            success: function (data) {
+                                //alert(data);
+                                $.each(data, function (key, value) {
+                                    $("#courseId").append('<option value=' + value.CourseId + '>' + value.CourseName + '</option>');
+                                });
+                            }
+                        });
+
+                    });
+                });
+            </script>
+        }
+    </body>
+</html>
